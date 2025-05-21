@@ -6,25 +6,33 @@ import {
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Pagination from "@mui/material/Pagination";
+import { AppDispatch, RootState } from "@/lib/store";
 
 
 export default function SearchPagination() {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
-    const { status, query, totalResults, currentPage } = useSelector(
-        (state) => state.search
+    const {  query, totalResults, currentPage } = useSelector(
+        (state : RootState) => state.search
     );
 
-    console.log("query.......",query )
+    
 
     const resultsPerPage = 10;
     const totalPages = Math.min(Math.ceil(totalResults / resultsPerPage), 10);
 
-    const handlePageChange = (event, page) => {
+    const handlePageChange = (
+        event: React.ChangeEvent<unknown>,
+        page: number
+    ) => {
         dispatch(setCurrentPage(page));
         if (query) {
-            console.log("if query", query)
-            dispatch(fetchResults({searchValue:query, start:(page - 1) * resultsPerPage + 1}));
+            dispatch(
+                fetchResults({
+                    searchValue: query,
+                    start: (page - 1) * resultsPerPage + 1,
+                })
+            );
         }
     };
 

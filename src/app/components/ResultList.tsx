@@ -1,10 +1,11 @@
 "use client";
 
+import { RootState } from "@/lib/store";
 import React from "react";
 import { useSelector } from "react-redux";
 
 export default function ResultList() {
-    const { results, status, error } = useSelector((state) => state.search);
+    const { results, status, error } = useSelector((state : RootState) => state.search);
     console.log(results);
 
     if (status === "loading") {
@@ -15,9 +16,7 @@ export default function ResultList() {
         return <p>Error: {error}</p>;
     }
 
-    // if (!results || results.length === 0) {
-    //     return <p>No results found.</p>;
-    // }
+   
     return (
         <>
             <div className="space-y-4 my-5">

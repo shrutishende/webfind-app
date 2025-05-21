@@ -1,74 +1,28 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    fetchResults,
-    setCurrentPage,
-    setQuery,
-    fetchSuggestions,
-} from "./searchSlice";
-import {
-    Autocomplete,
-    Box,
-    Button,
-    CircularProgress,
-    Stack,
-    TextField,
-} from "@mui/material";
-
+import { fetchResults, setCurrentPage, setQuery } from "./searchSlice";
+import { AppDispatch, RootState } from "@/lib/store";
 
 export default function Finder() {
+    const dispatch = useDispatch<AppDispatch>();
 
-    const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-    ]
-    const dispatch = useDispatch();
-
-    const { status, query, suggestions, suggestionsStatus } = useSelector(
-        (state) => state.search
-    );
+    const { status, query } = useSelector((state : RootState) => state.search);
     const [input, setInput] = useState(query);
-    const [open, setOpen] = useState(false);
-    console.log("input", input);
 
-    console.log("suggestions", suggestions)
-
- 
-
-
-    const handleSearch = async (e) => {
+    const handleSearch = async (e: React.FormEvent | React.MouseEvent) => {
         e.preventDefault();
         if (input) {
-              dispatch(fetchResults({ searchValue: input, start: 1 }));
+            dispatch(fetchResults({ searchValue: input, start: 1 }));
             dispatch(setQuery(input));
             dispatch(setCurrentPage(1));
-          
         }
     };
 
-
-   
-    
-
-    // useEffect(() => {
-    //     console.log("use effect");
-    //     if (input) {
-    //         dispatch(fetchResults({ searchValue: input, start: 1 }));
-    //     }
-
-        
-    // }, [input, dispatch]);
-
     return (
         <>
-             <div className="flex justify-center mt-7">
+            <div className="flex justify-center mt-7">
                 <form className="mb-4">
                     <input
                         type="text"
@@ -86,9 +40,7 @@ export default function Finder() {
                         Search
                     </button>
                 </form>
-            </div> 
-
-           
+            </div>
         </>
     );
 }

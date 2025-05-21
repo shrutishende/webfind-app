@@ -1,10 +1,33 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { findResults } from "./findResults";
 
-export const fetchResults = createAsyncThunk(
+interface FetchResultsArgs {
+    searchValue: string;
+    start: number;
+}
+interface SearchResults {
+    items: any[]; 
+    totalResults: number;
+}
+interface SearchItem {
+    id: string;
+    title: string;
+    link: string;
+    snippet: string;
+}
+
+interface SearchState {
+    query: string;
+    results: SearchItem[];
+    totalResults: number;
+    currentPage: number;
+    status: "idle" | "loading" | "succeeded" | "failed";
+    error: string | null;
+}
+
+export const fetchResults = createAsyncThunk<SearchResults, FetchResultsArgs>(
     "fetchResults",
     async ({ searchValue, start = 1 }, { rejectWithValue }) => {
-        console.log("search value", searchValue);
         try {
             const results = await findResults(searchValue, start);
             console.log("create async thunk", results);
@@ -13,12 +36,17 @@ export const fetchResults = createAsyncThunk(
                 totalResults: parseInt(results.totalResults || "0"),
             };
         } catch (error) {
-            return rejectWithValue(error.message || "Failed to fetch results");
+            if (error instanceof Error) {
+                return rejectWithValue(
+                    error.message || "Failed to fetch results"
+                );
+            }
+            return rejectWithValue("Failed to fetch results");
         }
     }
 );
 
-const initialState = {
+const initialState : SearchState= {
     query: "",
     results: [],
     totalResults: 0,
@@ -52,7 +80,7 @@ export const searchSlice = createSlice({
             })
             .addCase(fetchResults.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.payload;
+                state.error = action.payload as string;
             });
     },
 });

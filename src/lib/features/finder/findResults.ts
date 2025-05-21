@@ -1,4 +1,9 @@
-export const findResults = async (searchQuery , start=1) => {
+interface FindResultsResponse {
+    items: any[]; 
+    totalResults: string | number;
+}
+
+export const findResults = async (searchQuery:string, start = 1) => {
     const URI = `/search?query=${encodeURIComponent(
         searchQuery
     )}&start=${start}`;
