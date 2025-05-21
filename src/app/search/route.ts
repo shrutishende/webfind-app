@@ -34,15 +34,19 @@ export async function GET(request) {
             );
         }
         const data = await response.json();
-        console.log("data+++++++++++++++++", data);
-      //  console.log("nextStart", data.queries?.nextPage?.[0]?.startIndex);
-        // return NextResponse.json({
-        //     items: data.items || [],
-        //     totalResults:parseInt( data.searchInformation?.totalResults || "0"),
-        //     startIndex: parseInt(start)
-        // });
+        // console.log("data+++++++++++++++++", data);
+        //  console.log("nextStart", data.queries?.nextPage?.[0]?.startIndex);
+        console.log(
+            "total result++++++",
+            parseInt(data.searchInformation?.totalResults || "0")
+        );
+        return NextResponse.json({
+            items: data.items || [],
+            totalResults: parseInt(data.searchInformation?.totalResults || "0"),
+            startIndex: parseInt(start),
+        });
 
-        return NextResponse.json(data.items || []);
+        // return NextResponse.json(data.items || []);
     } catch (error) {
         return NextResponse.json(
             { error: error.message || "Failed to fetch search results" },

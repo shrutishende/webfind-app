@@ -1,78 +1,62 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { findResults } from "./findResults";
 
-export const fetchResults =
-    (searchValue, numberOfResults) => async (dispatch) => {
-        console.log("fetch tweets");
+export const fetchResults = createAsyncThunk(
+    "fetchResults",
+    async ({ searchValue, start = 1 }, { rejectWithValue }) => {
+        console.log("search value", searchValue);
         try {
-            dispatch(isLoadingResults());
-            const results = await findResults(searchValue);
-            console.log("resukts", results);
-            dispatch(loadingResultsSuccess(results));
+            const results = await findResults(searchValue, start);
+            console.log("create async thunk", results);
+            return {
+                items: results.items || [],
+                totalResults: parseInt(results.totalResults || "0"),
+            };
         } catch (error) {
-            const errorMsg = error.toString();
-            dispatch(loadingResultsFailed(errorMsg));
+            return rejectWithValue(error.message || "Failed to fetch results");
         }
-    };
+    }
+);
 
-// const FETCH_TWEETS = "FETCH_TWEETS";
-
-// export const fetchTweets = createAsyncThunk(
-//     FETCH_TWEETS,
-//     async (params, thunkAPI) =>
-//         await findTweets(params.searchValue, params.numberOfResults)
-// );
-
-//const initialState = { tweets: [], isLoading: false, error: null };
-
-const initialState = { query: "", results: [], status: "idle", error: null };
+const initialState = {
+    query: "",
+    results: [],
+    totalResults: 0,
+    currentPage: 1,
+    status: "idle",
+    error: null,
+};
 
 export const searchSlice = createSlice({
-    name: "finder",
+    name: "search",
     initialState,
 
     reducers: {
         setQuery: (state, action) => {
             state.query = action.payload;
         },
-        isLoadingResults: (state) => {
-            state.status = "loading";
-            state.error = null;
-        },
-        loadingResultsSuccess: (state, action) => {
-            state.status = "succeeded";
-            state.results = action.payload;
-        },
-        loadingResultsFailed: (state, action) => {
-            state.status = "failed";
-            state.error = action.payload;
+        setCurrentPage: (state, action) => {
+            state.currentPage = action.payload;
         },
     },
-
-    //     extraReducers:(builder) => {
-    //         [fetchTweets.fulfilled]: (state, { payload }) => {
-    //             state.tweets = payload;
-    //             state.isLoading = false;
-    //             state.error = null;
-    //         },
-    //         [fetchTweets.pending]: (state) => {
-    //             state.isLoading = true;
-    //             state.error = null;
-    //         },
-
-    //         [fetchTweets.rejected]: (state, { payload }) => {
-    //             state.isLoading = false;
-    //             state.error =
-    //                 "We couldn't fetch tweets right now. Please try again later.";
-    //         },
-    //     },
+    extraReducers(builder) {
+        builder
+            .addCase(fetchResults.pending, (state) => {
+                state.status = "loading";
+                state.error = null;
+            })
+            .addCase(fetchResults.fulfilled, (state, action) => {
+                state.status = "succeeded";
+                state.results = action.payload.items;
+                state.totalResults = action.payload.totalResults;
+            })
+            .addCase(fetchResults.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.payload;
+            });
+    },
 });
 
-export const {
-    setQuery,
-    isLoadingResults,
-    loadingResultsSuccess,
-    loadingResultsFailed,
-} = searchSlice.actions;
+export const { setQuery, setCurrentPage } = searchSlice.actions;
 
 export default searchSlice.reducer;

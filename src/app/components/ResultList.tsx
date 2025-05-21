@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 export default function ResultList() {
     const { results, status, error } = useSelector((state) => state.search);
-    console.log(results)
+    console.log(results);
 
     if (status === "loading") {
         return <p>Loading results...</p>;
@@ -21,7 +21,7 @@ export default function ResultList() {
     return (
         <>
             <div className="space-y-4 my-5">
-                {results.map((result, index) => (
+                {results?.map((result, index) => (
                     <div key={index} className="p-6">
                         <a
                             href={result.link}
@@ -38,6 +38,8 @@ export default function ResultList() {
                     </div>
                 ))}
             </div>
+
+            <div></div>
         </>
     );
 }
