@@ -1,6 +1,5 @@
 import Finder from "../lib/features/finder/Finder";
 import SearchPagination from "./components/Pagination";
-import Pagination from "./components/Pagination";
 import ResultList from "./components/ResultList";
 
 export default function Home() {

@@ -6,7 +6,8 @@ interface FetchResultsArgs {
     start: number;
 }
 interface SearchResults {
-    items: any[]; 
+    //items: any[]; 
+    items:SearchItem[]
     totalResults: number;
 }
 interface SearchItem {

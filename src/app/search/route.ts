@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request) {
-    console.log("api in");
+export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const query = searchParams.get("query");
@@ -47,10 +46,11 @@ export async function GET(request) {
         });
 
         // return NextResponse.json(data.items || []);
-    } catch (error) {
-        return NextResponse.json(
-            { error: error.message || "Failed to fetch search results" },
-            { status: 500 }
-        );
+    } catch (error: unknown) {
+        const errorMessage =
+            error instanceof Error
+                ? error.message
+                : "Failed to fetch search results";
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }
