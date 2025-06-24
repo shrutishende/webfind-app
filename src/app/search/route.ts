@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const apiKey = process.env.GOOGLE_API_KEY;
-        const cx = process.env.GOOGLE_CX_ID;
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+        const cx = process.env.NEXT_PUBLIC_GOOGLE_CX_ID;
 
         const response = await fetch(
             `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${encodeURIComponent(
